@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  password  String
+  token     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  memes     Meme[]
+  comments  Comment[]
+  likes     Like[]
+  @@map(name:"user")
+}
+
+model Meme {
+  id        Int      @id @default(autoincrement())
+  title     String
+  image     String @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  numberOfLikes Int @default(0)
+  numberOfComments Int @default(0)
+  comments  Comment[]
+  likes     Like[]
+
+  @@map(name:"meme")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  text      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  memeId    Int
+  meme      Meme     @relation(fields: [memeId], references: [id])
+
+  @@map(name:"comment")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  memeId    Int
+  meme      Meme     @relation(fields: [memeId], references: [id])
+
+  @@map(name:"like")
+}

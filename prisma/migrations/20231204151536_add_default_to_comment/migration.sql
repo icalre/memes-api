@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE `meme` MODIFY `numberOfLikes` INTEGER NOT NULL DEFAULT 0,
+    MODIFY `numberOfComments` INTEGER NOT NULL DEFAULT 0;
